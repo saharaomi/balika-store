@@ -40,6 +40,8 @@ export default function Home() {
             <Link href="/" className="hover:text-[#b08d57]">Home</Link>
             <a href="#products" className="hover:text-[#b08d57]">Shop</a>
             <a href="#story" className="hover:text-[#b08d57]">About</a>
+            <Link href="/login" className="hover:text-[#b08d57]">Login</Link>
+            <Link href="/signup" className="primary-button">Sign Up</Link>
           </div>
         </div>
       </nav>
