@@ -17,6 +17,7 @@ export default function CustomerPage() {
   const [customerName, setCustomerName] = useState("");
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
+  const [deliveryArea, setDeliveryArea] = useState("");
 
   useEffect(() => {
     initialize();
@@ -121,6 +122,12 @@ export default function CustomerPage() {
     0
   );
 
+  const deliveryCharge =
+    deliveryArea === "inside" ? 90 :
+    deliveryArea === "outside" ? 120 : 0;
+
+  const grandTotal = totalAmount + deliveryCharge;
+
   const filteredProducts =
     selectedCategory === "All"
       ? products
@@ -134,6 +141,11 @@ export default function CustomerPage() {
 
     if (!cart.length) {
       setMessage("Your cart is empty!");
+      return;
+    }
+
+    if (!deliveryArea) {
+      setMessage("Please select your delivery area!");
       return;
     }
 
@@ -153,9 +165,9 @@ export default function CustomerPage() {
         user_id: userId,
         customer_name: customerName,
         phone,
-        address,
+        address: `${deliveryArea === "inside" ? "Inside Dhaka" : "Outside Dhaka"} - ${address}`,
         items: orderItems,
-        total_amount: totalAmount,
+        total_amount: grandTotal,
         payment_method: "COD",
         status: "Pending",
       });
@@ -384,10 +396,15 @@ export default function CustomerPage() {
                 ))}
               </div>
 
-              <div className="text-right mt-6">
-                <p className="text-gray-600">Total Amount</p>
+              <div className="text-right mt-6 space-y-2">
+                <p className="text-gray-600">
+                  Product Subtotal: ৳{totalAmount.toLocaleString("en-BD")}
+                </p>
+                <p className="text-gray-600">
+                  Delivery Charge: {deliveryArea === "inside" ? "৳90" : deliveryArea === "outside" ? "৳120" : "Select location"}
+                </p>
                 <p className="text-2xl font-bold text-[#b08d57]">
-                  ৳{totalAmount.toLocaleString("en-BD")}
+                  Grand Total: ৳{grandTotal.toLocaleString("en-BD")}
                 </p>
               </div>
             </>
@@ -448,6 +465,22 @@ export default function CustomerPage() {
               />
             </div>
 
+            <div>
+              <label className="block font-semibold mb-2">
+                Delivery Location
+              </label>
+              <select
+                value={deliveryArea}
+                onChange={(e) => setDeliveryArea(e.target.value)}
+                required
+                className="w-full border rounded-lg p-3 bg-white"
+              >
+                <option value="">Select Delivery Location</option>
+                <option value="inside">Inside Dhaka - ৳90</option>
+                <option value="outside">Outside Dhaka - ৳120</option>
+              </select>
+            </div>
+
             <div className="bg-[#faf7f2] p-4 rounded-lg">
               <p className="font-semibold">
                 Payment Method: Cash on Delivery
@@ -464,7 +497,7 @@ export default function CustomerPage() {
             >
               {submitting
                 ? "Placing Order..."
-                : `Place Order - ৳${totalAmount.toLocaleString("en-BD")}`}
+                : `Place Order - ৳${grandTotal.toLocaleString("en-BD")}`}
             </button>
           </form>
         </div>
